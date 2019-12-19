@@ -1,0 +1,23 @@
+body {
+	background-color: white;
+}
+
+input{
+	background-color: orange;
+}
+
+#output {
+	color:green;
+	padding-left: 50px;
+	padding-top: 10px;
+	min-width: 0px;
+	min-height: 0px;
+}
+
+#drop_zone {
+	background-color: grey;
+	color:white;
+	min-width: 100px;
+	min-height: 100px;
+	padding: 5px;
+}
