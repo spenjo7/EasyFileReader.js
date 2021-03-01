@@ -38,15 +38,15 @@ and returning the contents + metadata of the read files
 ````javascript
 {
  metadata:{
-	name,					// a string; containing the file's name
-	lastModified,			// a number; containing the last modified timestamp in miliseconds
-	lastModifiedDate,		// a date object; containing the last modified timestamp
-	webkitRelativePath,		// a string; this is usually empty
-	type,					// a string; contains the file type
+	name,			// a string; containing the file's name
+	lastModified,		// a number; containing the last modified timestamp in miliseconds
+	lastModifiedDate,	// a date object; containing the last modified timestamp
+	webkitRelativePath,	// a string; this is usually empty
+	type,			// a string; contains the file type
 	size
  },
- contents					// a string; containing the actual text contents of the file if sucessful OR null on error
- error						// a string; containing an error message on error OR null on success
+ contents			// a string; containing the actual text contents of the file if sucessful OR null on error
+ error				// a string; containing an error message on error OR null on success
 }
 ````
 
@@ -54,16 +54,16 @@ and returning the contents + metadata of the read files
 - This Class is intended to be used as part of an Event Listener.
 1. As Part of the Event Listener, you will need to Instantiate this Class with the optional FileTypes Array:
 ````javascript
-    myFileReader = new EasyFileReader(["application/json" , "text/plain"])
+myFileReader = new EasyFileReader(["application/json" , "text/plain"])
 ````
 2. After Instantiation, you can set a variable to be the awaited result of the "EasyFileReader.readFiles()" method. At that same time, you will also need to pass in the FileList object from the Event Listener:
 ````javascript
-	let loadedData = await myFileReader.readFiles( event.dataTransfer.files )
+let loadedData = await myFileReader.readFiles( event.dataTransfer.files )
 ````
 3. Once the "EasyFileReader.readFiles()" method returns it's array of objects, you can use your variable however you see fit:
 * (It does not need to be a Callback function or a 'thenable')
 ````javascript
-	console.log( loadedData )
+console.log( loadedData )
 ````
 
 ## Some Important Notes:
