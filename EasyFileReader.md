@@ -12,11 +12,11 @@ and returning the contents + metadata of the read files
 * "application/json" or "text/plain"
 ** If this Optional Parameter is ommited, all file types will be allowed 
 ** this does not mean that the files will read correctly, only that the class will attempt to read those files (which could cause bugs to occur)
-             
+
 ### fileList : [Mandatory] < derived from certain Event Listeners >
 - The specific supported events are:
-+ "dragover" event listener on most html elements 
-( typically a <div>, <form> or <textarea> element would be suggested, though other elements such as <p> also work. )
++ "dragover" event listener on most html elements
+++ ( typically a \<div>, \<form> or \<textarea> element would be suggested, though other elements such as \<p> also work. )
 ++ The FileObject providing attribute is "event.dataTransfer.files"
 
 +  "change" event listener for an <input type="file"> element
@@ -38,15 +38,15 @@ and returning the contents + metadata of the read files
 ````javascript
 {
  metadata:{
-           name,                 // a string; containing the file's name
-           lastModified,         // a number; containing the last modified timestamp in miliseconds
-           lastModifiedDate,     // a date object; containing the last modified timestamp
-           webkitRelativePath,   // a string; this is usually empty
-           type,                 // a string; contains the file type
-           size
+	name,					// a string; containing the file's name
+	lastModified,			// a number; containing the last modified timestamp in miliseconds
+	lastModifiedDate,		// a date object; containing the last modified timestamp
+	webkitRelativePath,		// a string; this is usually empty
+	type,					// a string; contains the file type
+	size
  },
- contents                        // a string; containing the actual text contents of the file if sucessful OR null on error
- error                           // a string; containing an error message on error OR null on success
+ contents					// a string; containing the actual text contents of the file if sucessful OR null on error
+ error						// a string; containing an error message on error OR null on success
 }
 ````
 
