@@ -21,3 +21,12 @@ input{
 	min-height: 100px;
 	padding: 5px;
 }
+
+/*Unrelated to core code; allows uniform-sized image previews*/  
+img.boxed {
+	display: block;
+	max-width:230px;
+	max-height:95px;
+	width: auto;
+	height: auto;
+}

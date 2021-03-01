@@ -1,64 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" href="stylesheet.css" type="text/css"><!Add Styling to make drop zone more visible>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="stylesheet.css" type="text/css"><!--Add Styling to make drop zone more visible-->
+	
+	<!-- EasyFileReader External Script-->
+	<script src = "EasyFileReader.js"></script>
+
+	<!-- EasyListener External Script-->
+	<script src="EasyListener.js"></script>
 </head>
 <body>
 
-  <! EasyFileReader External Script>
-  <script src = "EasyFileReader.js"></script>
-
-  <! EasyListener External Script>
-  <script src="EasyListener.js"></script>
 
   <! Basic HTML for Project>
   <input type="file" id="fileButton" name="fileButton"  multiple />
   <div id="drop_zone">Drop files here</div>
-  <div id="output"></div>
-
-  <! Local Script>
+  <div id="textout"></div>
+  <div id="previewBox"></div>
+  <!-- Local Script-->
   <script>
 
   // List of Allowable File Types (Optional)
-  const supportedFileTypes = [ // Add or remove fileReader supported file types as needed; if this is set to null then any file type can be potentially used
-    'text/plain',
-    'application/json',
-    'text/csv',
-    'application/vnd.ms-excel',
-    '' // This is for '.md' files
-  ]; 
+ // Add or remove fileReader supported file types as needed; if this is set to null then any file type can be potentially used
+
+const genImgFromSrc = (src) => {
+	const img = document.createElement('img')
+	img.classList.add('boxed')
+	img.src = src
+	return img
+}	
+
+const preview = (src) => {
+	document.getElementById('previewBox').appendChild(genImgFromSrc(src))
+}
+
 
   // Declare the Customizable callback function
   const myCallback = (loadedData) => {
-    // Remember that the results come back as an array of Objects with Content/Errors AND Metadata
-    
-    //console.log(loadedData); // Un-Comment to see the returned Data in it's raw form 
+	// Remember that the results come back as an array of Objects with Content/Errors AND Metadata
+		console.log(loadedData) // Checkout the returned Data in it's raw form
+	
+		loadedData.forEach(f => {
+			const { err, category, name, plaintext, encoded } = f
+			if(err){
+				console.error(err)
+			}
 
-    // Lets output the Loaded Data to the Output Area
-    loadedData = loadedData
-          .filter( fileObj => {
-              if(fileObj.error){ // some basic error handling
-                console.log(fileObj.error);
-                return false;
-              } else {
-                return true;
-              }
-          } )
-          .map( // change from objects to strings
-              fileObj => 
-              `<p><strong><em>${fileObj.metadata.name}:</em></strong></br>${fileObj.contents}</p>`  // using template literals to get some metadata and the contents
-            )
-          .join(' '); // this prevents the output results from having commas between them (since they are coming from an array)
-        
- 
-      document.getElementById('output').innerHTML = loadedData;
+			if(category == 'text' && plaintext !== null ){
+				document.getElementById('textout').innerText += `${plaintext}\n`
+			}
+
+			if(category == 'image' && encoded !== null){
+				preview(encoded)
+			}
+		})
   }
 
   // Instantiate and Use Syntactic Sugar for a File Drop
-  new EasyListener("drop_zone", myCallback).fileDropListener();
+  new EasyListener("drop_zone", myCallback, 'text').fileDropListener();
 
   // Instantiate and Use Syntactic Sugar for a File Input Button
-  new EasyListener("fileButton", myCallback).fileButtonListener();
+  new EasyListener("fileButton", myCallback, 'text').fileButtonListener();
 
   </script>
 </body>
