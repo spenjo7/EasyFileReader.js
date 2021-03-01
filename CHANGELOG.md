@@ -12,3 +12,4 @@
 --- Images can easily be rendered into a new \<img> element
 
 - Cleaning up some of the documentation
+-- The individual MD files have been moved into README.md
