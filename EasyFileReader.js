@@ -1,12 +1,11 @@
 // For Documentation on this the "EasyFileReader" class, look at the "EasyFileReader.md" file
 
 class EasyFileReader {
-    constructor ( allowedFileTypes){
+    constructor (allowedFileTypes){
         this.allowedFileTypes = allowedFileTypes;
     }
 
-    // This is the Main function that will be externally used
-    readFiles = ( fileList ) => {  // rename later
+    readFiles = (fileList) => { 
         
         return new Promise ( resolve => {
     
@@ -42,7 +41,7 @@ class EasyFileReader {
     
     };
 
-    readSingleFiles = ( singleFile, fileMetadata ) => { 
+    readSingleFiles = (singleFile, fileMetadata) => { 
 
         return new Promise( resolve => {
             let reader = new FileReader();
@@ -65,7 +64,7 @@ class EasyFileReader {
         
     };
 
-    getFileMetadata = ( fileObject) => {
+    getFileMetadata = (fileObject) => {
         // This Re-Structures the File's Metadata and sends it back; this due to File Objects having some slight differences from what we need
     
         let {name, lastModified, lastModifiedDate, webkitRelativePath, type, size} = fileObject; // Manually destructure the File Object
