@@ -1,148 +1,126 @@
 // For Documentation on this the "EasyFileReader" class, look at the "EasyFileReader.md" file
 class EasyFileReader {
 
-	getReftypes(){ // used for several other methods
-		return [
-			{
-				category: 'audio',
-				types: [
-					'audio/mpeg',
-					'audio/mid'
-				]
-			},
-			{
-				category: 'image',
-				types: [
-					'image/bmp',
-					'image/gif',
-					'image/jpeg',
-					'image/png',
-					'image/svg+xml',
-					'image/x-icon'
-				]
-			},
-			{
-				category: 'text',
-				types: [
-					'application/json',
-					'text/css',
-					'text/csv',
-					'text/javascript',
-					'text/plain',
-					'text/html'
-				],
-				exts: [ '.md' ]
-			},
-			{
-				category: 'richText',
-				types: [
-					'application/msword',       // .doc and .rtf 
+	getFileDetails(fileObject){	// Re-Structure File's Metadata; send back with extrapolated data
+		const rgx_fileExt = /[^\b](?<ext>\.[a-z\d]{1,4})\b/i 		
+		const getCategoryFromType = (str,ext) => {
+			const { category }  = [
+				{ category: 'audio',	types: [
+					'audio/mpeg',	'audio/mid'
+				]},
+
+				{ category: 'image',	types: [
+					'image/bmp',	'image/gif',	'image/jpeg',	
+					'image/png',	'image/svg+xml',	'image/x-icon'
+				]},
+
+				{ category: 'text',	exts: [ '.md' ], types: [
+					'application/json',	'text/css',	'text/csv',
+					'text/javascript',	'text/plain',	'text/html'
+				]},
+
+				{ category: 'richtext',	types: [
+					'application/msword', /*doc and rtf*/	  
 					'application/vnd.ms-excel',
 					'application/vnd.openxmlformats-officedocument.presentationml.presentation',
 					'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 					'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-				]
-			},
-			{
-				category: 'video',
-				types: [
-					'video/avi',
-					'video/mp4'
-				]
-			},
-			{
-				category: 'pdf',
-				types: [ 
-					"application/pdf"
-				]
-			},
-			{
-				category: 'compressed',
-				types: [
-					'application/x-zip-compressed'
-				]
-			}
-		]
-	}
+				]},
 
-	getCategoryFromType(str,ext){
-		const { category }  = this.getReftypes()
+				{ category: 'video',	types: [
+					'video/avi',	'video/mp4'
+				]},
+				
+				{ category: 'pdf',	types: [ "application/pdf" ]},
+
+				{ category: 'compressed',	types: [ 'application/x-zip-compressed']}
+			]
 			.find( m => m.types.includes(str) || (m.exts && m.exts.includes(ext))) ?? {}
-		return category?? null
-	}
+			return category?? null
+		}
 
+		const {name, lastModified, lastModifiedDate, type, size} = fileObject
 
-	async readFiles(objectList){ 
+		const fileExt = rgx_fileExt.test(name)? rgx_fileExt.exec(name).groups.ext.toLowerCase() : null
+		const category = getCategoryFromType(type, fileExt)
 		
-		const fileList = Object.values( objectList )
-			.filter( fileObj => typeof fileObj !== "number" ) 
+		return ({ fileName: name, category, lastModified, type, size, fileExt})
+	}	
 
-			const handleFile = async (file) => {
-				const metadata = await this.getFileMetadata( file )
-				const {category} = metadata
-				let err = null
-				let plaintext = null
-				let encoded = null
-				if(category){
-					try{
-						let readResults = await this.getContents(file, category)
-						plaintext = await readResults.plaintext?? null
-						encoded =  await readResults.encoded ?? null
-					}
-					catch(error){
-						err = error
-					}
+
+	async getFileContents(file){ // Extract the text and/or encoded file data 
+		const readPlaintextFile = async (file) => { 
+			return new Promise( resolve => {
+				const reader = new FileReader()
+				reader.onloadend = function(f){
+					let fileContents = f.target.result // each file has it's own target.result
+					resolve(fileContents)
 				}
+				reader.readAsText(file)
+			})
+		}
 
-				const output = { ...metadata, plaintext, encoded, err }
-				return await output
-			} 
+		const readBase64EncodedFile = async (file) => { 
+			return new Promise( resolve => {
+				const reader = new FileReader()
+				reader.onloadend = ((f) => {
+					const encoding = f.target.result 
+					resolve(encoding)	
+				})
+				reader.readAsDataURL(file)
+			})
+		}
 
-			return Promise.all( fileList.map( file => handleFile(file) ))
-	}
+		const plaintext = (file.details.category == 'text' )? 
+			await readPlaintextFile(file) : null
 
-	async getContents(file, category){
-		const plaintext = (category == 'text')? 
-			await this.readPlaintextFile(file)
-			: null
-
-		const encoded = await this.readBase64EncodedFile(file)
-		
+		const encoded = await readBase64EncodedFile(file)
 		return { plaintext, encoded } 
 	}
 
-	async readPlaintextFile(file){ 
-		return new Promise( resolve => {
-			const reader = new FileReader()
-			reader.onloadend = function(f){
-				let fileContents = f.target.result
-				resolve(fileContents)
-			}
-			reader.readAsText(file)
-		})
-	}
 
-	async readBase64EncodedFile(file){ 
-		return new Promise( resolve => {
-			const reader = new FileReader()
-			reader.onloadend = ((f) => {
-				const encoding = f.target.result // each file has it's own target.result
-				resolve(encoding)	
+		// Get File(s) Details then Contents; send back Array of Objects
+	async readFiles(objectList, allowedCategories = null ){
+
+		const handleFile = async (file) => {
+			/*const metadata = this.getFileDetails( file )*/
+			const {details} = file
+			const {category} = details
+			
+			if(!category){ return details }
+				try{
+					const { plaintext, encoded }  = await this.getFileContents(file)
+					return ({ ...details, plaintext, encoded })
+				}
+				catch(error){
+					err = error
+					return ({err})
+				}
+		} 
+	
+		const categoryFilter = ( currentFile ) => {
+			if( !allowedCategories){ return true }
+			const { category } = currentFile.details
+			if( !category ){ return false }
+			return allowedCategories.find( el => category === el.toLowerCase() )?
+				true : false 
+		}
+
+		const fileList = Object.values( objectList )
+			.filter( fileObj => typeof fileObj !== "number" )
+			.map( file => {
+				file.details = this.getFileDetails( file )
+				return file
 			})
-			reader.readAsDataURL(file)
-		})
+			.filter( file =>{
+				const isValid = categoryFilter(file) 
+				if(!isValid){
+					console.error(`${file.details.fileName} is not of an acceptable type/extention for this opperation!`)
+				}
+				return isValid
+			})
+
+
+		return Promise.all( fileList.map( file => handleFile(file) ))
 	}
-
-	async getFileMetadata(fileObject){
-		// This Re-Structures the File's Metadata and sends it back; this due to File Objects having some slight differences from what we need
-		const {name, lastModified, lastModifiedDate, type, size} = fileObject // Manually destructure the File Object
-		const rgx_fileExt = /[^\b](?<ext>\.[a-z\d]{1,4})\b/i 
-		const match = rgx_fileExt.test(name)? rgx_fileExt.exec(name) : null
-		const fileExt = match? match.groups.ext.toLowerCase() : null 
-
-		const category = this.getCategoryFromType(type, fileExt)
-		
-		const metadata = { fileName: name, category, lastModified, type, size, fileExt} // Manually Re-Structuring a new Object
-		return metadata // send the Re-Strucured Data back
-	}	
 }

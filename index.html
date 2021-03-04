@@ -21,29 +21,29 @@
   <!-- Local Script-->
   <script>
 
-  // List of Allowable File Types (Optional)
- // Add or remove fileReader supported file types as needed; if this is set to null then any file type can be potentially used
-
-
 const genPreview = (file) => {
 	if(!file || !file.category){ return null }
 
 	const refData = [
 		{ cat:'audio',		tag: 'audio', sourceElement: true },
 		{ cat: 'image',		tag: 'img', classList: 'boxed'	},
-		{ cat: 'text', 		tag: 'p', isText: true 	},
+		{ cat: 'text', 		tag: 'p',	isText: true 	},
+		{ cat: 'richtext',	tag: 'div',	noPreview: true, classList: 'boxed'	},
 		{ cat: 'video',	tag: 'video', sourceElement: true  	},
-		{ cat: 'pdf', tag: 'iframe'		}
+		{ cat: 'pdf', tag: 'iframe'	}
 	]
 	const match = refData.find( el => file.category === el.cat )
 	if(!match){ return null }
 
 	const element = document.createElement(match.tag)
+
 	if(match.classList){
 		element.classList.add(match.classList)
 	}
 
-	if(match.isText){
+	if (match.noPreview) {
+		element.innerHTML = '<h2>NO PREVIEW<br>AVAILABLE!<\/h2>'
+	} else if(match.isText){
 		element.innerText = file.plaintext 
 	} else if(match.sourceElement) {
 		const controls = document.createAttribute('controls')
@@ -75,10 +75,10 @@ const myCallback = (loadedData) => {
   }
 
   // Instantiate and Use Syntactic Sugar for a File Drop
-  new EasyListener("drop_zone", myCallback, 'text').fileDropListener();
+  new EasyListener(document.getElementById("drop_zone"), myCallback).fileDropListener()
 
   // Instantiate and Use Syntactic Sugar for a File Input Button
-  new EasyListener("fileButton", myCallback, 'text').fileButtonListener();
+  new EasyListener("fileButton", myCallback).fileButtonListener()
 
   </script>
 </body>

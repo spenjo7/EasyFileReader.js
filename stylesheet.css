@@ -23,7 +23,7 @@ input{
 }
 
 /*Unrelated to core code; allows uniform-sized image previews*/  
-img.boxed {
+.boxed {
 	display: block;
 	max-width:230px;
 	max-height:95px;

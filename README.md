@@ -1,7 +1,9 @@
 # EasyFileReader.js
+- [2.1.0] 2021-03-04
 
 ## Introduction
-- This Library facilitates the implementation of JavaScript file reading capabilities into your HTML's Event Listeners. 
+- This Library facilitates the implementation of JavaScript file reading capabilities into your HTML's Event Listeners.
+	### Noteably, this Library facilitates the creation of File Drop Zones   
 -- This Library supports reading multiple files at once and returns the file metadata as well as the file contents. 
 -- Finally, it includes an optional script to assist with the creation of the relevant Event Listeners
 
@@ -116,6 +118,7 @@ console.log( loadedData )
 
 ### domTarget : [Mandatory]
 - A string containing the "id" value of an HTML element which is to be the target of the event listener.
+-- Alternatively the DOM element itself can be passed in place of the string ( as of version 2.1.0)
 
 ### callback : [Mandatory]
 - A JavaScript Callback function. 
