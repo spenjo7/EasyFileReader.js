@@ -50,14 +50,15 @@
 -- These Objects have the following properties (having the noted Data types):
 ````javascript
 {
- category,		// a string; consisting of the file's "category" as determined by it's mime-type 
+ category,		// a string; consisting of the file's "category", as determined by it's mime-type 
  encoded, 		// a string; consisting of the base64 encoded contents of the file
  err,			// a string; consisting of an error message on error OR null on success
+ fileName,		// a string; consisting of the file's name
+ fileExt,		// a string; consisting of the file's extention, as determined using a regular expression
  lastModified,	// a number; consisting of the last modified timestamp in miliseconds ( from epoch )
- name,			// a string; consisting of the file's name
  plaintext,		// a string; consisting of the actual text contents of the file ( if applicable )
  size,			// a number; consisting of the number of bytes that the file takes up 
- type			// a string; consisting of the file's mime-type
+ type			// a string; consisting of the file's mime-type 
 }
 ````
 

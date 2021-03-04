@@ -24,35 +24,52 @@
   // List of Allowable File Types (Optional)
  // Add or remove fileReader supported file types as needed; if this is set to null then any file type can be potentially used
 
-const genImgFromSrc = (src) => {
-	const img = document.createElement('img')
-	img.classList.add('boxed')
-	img.src = src
-	return img
-}	
 
-const preview = (src) => {
-	document.getElementById('previewBox').appendChild(genImgFromSrc(src))
+const genPreview = (file) => {
+	if(!file || !file.category){ return null }
+
+	const refData = [
+		{ cat:'audio',		tag: 'audio', sourceElement: true },
+		{ cat: 'image',		tag: 'img', classList: 'boxed'	},
+		{ cat: 'text', 		tag: 'p', isText: true 	},
+		{ cat: 'video',	tag: 'video', sourceElement: true  	},
+		{ cat: 'pdf', tag: 'iframe'		}
+	]
+	const match = refData.find( el => file.category === el.cat )
+	if(!match){ return null }
+
+	const element = document.createElement(match.tag)
+	if(match.classList){
+		element.classList.add(match.classList)
+	}
+
+	if(match.isText){
+		element.innerText = file.plaintext 
+	} else if(match.sourceElement) {
+		const controls = document.createAttribute('controls')
+		element.setAttributeNode(controls)
+		const source = document.createElement('source')
+		source.src = file.encoded
+		source.type = file.type
+		element.appendChild(source)
+	}else {
+		element.src = file.encoded
+	}
+
+	document.getElementById('previewBox').appendChild(element)
 }
 
-
   // Declare the Customizable callback function
-  const myCallback = (loadedData) => {
+const myCallback = (loadedData) => {
 	// Remember that the results come back as an array of Objects with Content/Errors AND Metadata
 		console.log(loadedData) // Checkout the returned Data in it's raw form
 	
-		loadedData.forEach(f => {
-			const { err, category, name, plaintext, encoded } = f
+		loadedData.forEach(file => {
+			const { err } = file
 			if(err){
 				console.error(err)
-			}
-
-			if(category == 'text' && plaintext !== null ){
-				document.getElementById('textout').innerText += `${plaintext}\n`
-			}
-
-			if(category == 'image' && encoded !== null){
-				preview(encoded)
+			} else {
+				genPreview(file)
 			}
 		})
   }

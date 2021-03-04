@@ -1,6 +1,18 @@
 # Change Log
 
+## [2.0.0] 2021-03-03 - Expanded Features
+
+### Changed: 
+- EasyFileReader.js - Now uses regular expressions to try to determine a files extention
+-- The extracted file extention is passed along with the metadata as the 'fileExt' attribute
+-- The extracted file extention can be used as a backup for files with no discernable 'type' ( ex: .MD files like this one) 
+-- The 'name' attribute from the file metadata has been changed to the 'filename' attribute because this is more in line with what people would expect
+
+- Index.html - (The non-essential example file) - Has been expanded to preview all sorts of files, not just images
+-- This may get added to the EasyListener, which itself may be expanded to generate forms and previews
+
 ## [2.0.0] 2021-03-01 - Massive Refactor
+
 ### Added:
 - CHANGELOG.md
 

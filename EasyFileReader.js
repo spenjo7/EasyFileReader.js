@@ -1,18 +1,18 @@
 // For Documentation on this the "EasyFileReader" class, look at the "EasyFileReader.md" file
 class EasyFileReader {
 
-	getRefArr(){ // used for several other methods
+	getReftypes(){ // used for several other methods
 		return [
 			{
 				category: 'audio',
-				arr: [
+				types: [
 					'audio/mpeg',
 					'audio/mid'
 				]
 			},
 			{
 				category: 'image',
-				arr: [
+				types: [
 					'image/bmp',
 					'image/gif',
 					'image/jpeg',
@@ -23,47 +23,51 @@ class EasyFileReader {
 			},
 			{
 				category: 'text',
-				arr: [
+				types: [
 					'application/json',
 					'text/css',
 					'text/csv',
 					'text/javascript',
 					'text/plain',
 					'text/html'
-				]
+				],
+				exts: [ '.md' ]
 			},
 			{
-				category: "richText",
-				arr: [
+				category: 'richText',
+				types: [
 					'application/msword',       // .doc and .rtf 
-					'application/vnd.ms-excel'
+					'application/vnd.ms-excel',
+					'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+					'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+					'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 				]
 			},
 			{
 				category: 'video',
-				arr: [
+				types: [
 					'video/avi',
 					'video/mp4'
 				]
 			},
 			{
 				category: 'pdf',
-				arr: [ 
+				types: [ 
 					"application/pdf"
 				]
 			},
 			{
 				category: 'compressed',
-				arr: [
+				types: [
 					'application/x-zip-compressed'
 				]
 			}
 		]
 	}
 
-	getCategoryFromType(str){
-		const { category }  = this.getRefArr()
-			.find( m => m.arr.includes(str) ) ?? {}
+	getCategoryFromType(str,ext){
+		const { category }  = this.getReftypes()
+			.find( m => m.types.includes(str) || (m.exts && m.exts.includes(ext))) ?? {}
 		return category?? null
 	}
 
@@ -123,8 +127,7 @@ class EasyFileReader {
 			const reader = new FileReader()
 			reader.onloadend = ((f) => {
 				const encoding = f.target.result // each file has it's own target.result
-				resolve(encoding)
-				//resolve ( genImgFromSrc(src) )	
+				resolve(encoding)	
 			})
 			reader.readAsDataURL(file)
 		})
@@ -133,8 +136,13 @@ class EasyFileReader {
 	async getFileMetadata(fileObject){
 		// This Re-Structures the File's Metadata and sends it back; this due to File Objects having some slight differences from what we need
 		const {name, lastModified, lastModifiedDate, type, size} = fileObject // Manually destructure the File Object
-		const category = this.getCategoryFromType(type)
-		const metadata = {name, category, lastModified, type, size} // Manually Re-Structuring a new Object
+		const rgx_fileExt = /[^\b](?<ext>\.[a-z\d]{1,4})\b/i 
+		const match = rgx_fileExt.test(name)? rgx_fileExt.exec(name) : null
+		const fileExt = match? match.groups.ext.toLowerCase() : null 
+
+		const category = this.getCategoryFromType(type, fileExt)
+		
+		const metadata = { fileName: name, category, lastModified, type, size, fileExt} // Manually Re-Structuring a new Object
 		return metadata // send the Re-Strucured Data back
 	}	
 }

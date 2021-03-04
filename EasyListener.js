@@ -2,9 +2,6 @@
 
 class EasyListener {
 	constructor ( domTarget, callback){
-
-		const selectFileTypes  = 
-
 		this.domTarget = document.getElementById(domTarget)
 		this.callback = callback
 	}
