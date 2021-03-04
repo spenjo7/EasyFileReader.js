@@ -74,11 +74,9 @@ const myCallback = (loadedData) => {
 		})
   }
 
-  // Instantiate and Use Syntactic Sugar for a File Drop
-  new EasyListener(document.getElementById("drop_zone"), myCallback).fileDropListener()
-
-  // Instantiate and Use Syntactic Sugar for a File Input Button
-  new EasyListener("fileButton", myCallback).fileButtonListener()
+  new EasyListener(myCallback)
+  	.fileDropListener(document.getElementById("drop_zone")) 
+  	.fileButtonListener("fileButton")
 
   </script>
 </body>
