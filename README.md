@@ -1,5 +1,11 @@
 # EasyFileReader.js
+- [3.0.0] 2021-04-02
 - [2.1.0] 2021-03-04
+
+## Important Update 
+While this project supports a number of types of files, it can be a bit overkill if you just want your \<textarea> elements to support dropping a .txt file into them. While the prior functionality is unchanged, I've also introduced a small, stand alone .js file to make all of your textboxes drop and drag capable without any other changes needed.  
+- Unlike the EasyFileReader.js functions, this does not support multiple files on the same input at the same time. 
+
 
 ## Introduction
 - This Library facilitates the implementation of JavaScript file reading capabilities into your HTML's Event Listeners.
@@ -11,6 +17,14 @@
 - The Library includes a primary script (EasyFileReader.js) and an optional secondary script (EasyListener.js) 
 -- Each of those scripts have their own section in this file which explains their purpose, functionality, and implementation in greater detail
 -- Additionally, there is an example index.html file which demonstrates the use of these scripts (and an accomponying stylesheet.css file for stylization)
+
+# The "handleFiles.js" script
+
+## Useage:
+Just add the handlefiles.js script to your page and any <textarea> , <input type="text"> and <input type="password"> elements will be able to accept plaintext files as inputs.
+````html
+<script src="handleFiles.js"></script>
+````
 
 # The "EasyFileReader" Class
 
@@ -158,6 +172,5 @@ myCallback = ( dataArray ) => {
 ````javascript
 new EasyListener("drop_zone", myCallback).fileDropListener()
 ````
-
 
 ## Author: Jon Spencer (spenjo7)

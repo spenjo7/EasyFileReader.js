@@ -2,7 +2,7 @@ body {
 	background-color: white;
 }
 
-input{
+input[type=file]{
 	background-color: orange;
 }
 

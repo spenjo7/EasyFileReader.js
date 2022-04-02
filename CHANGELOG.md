@@ -41,3 +41,8 @@
 
 - Cleaning up some of the documentation
 -- The individual MD files have been moved into README.md
+
+## [3.0.0] 2022-04-02 - Simplified *global* variant for plaintext inputs ( such as textareas and input fields )
+- handleFiles.js - Is a standalone script to add plain text drop and drag functionality to textarea and text input fields.
+- index-plaintext_only.html is a demonstration file to show off that capability
+- stylesheets.css - Updated the input css so that it only impacts file type input elements
